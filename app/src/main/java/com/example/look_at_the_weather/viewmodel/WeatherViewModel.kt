@@ -4,14 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.look_at_the_weather.network.ApiService
 import com.example.look_at_the_weather.network.Constant.myApiKey
-import com.example.look_at_the_weather.network.RetrofitInstance
 import com.example.look_at_the_weather.network.model.WeatherResponseModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class WeatherViewModel : ViewModel() {
+@HiltViewModel
+class WeatherViewModel @Inject constructor(
+    private val weatherApi: ApiService
+) : ViewModel() {
 
-    private val weatherApi = RetrofitInstance.weatherApi
     private val weatherResult = MutableLiveData<ResponseCallback<WeatherResponseModel>>()
     val weatherResultLiveData: LiveData<ResponseCallback<WeatherResponseModel>> =
         weatherResult //exposed to UI
@@ -27,7 +31,8 @@ class WeatherViewModel : ViewModel() {
                         weatherResult.value = ResponseCallback.Success(data)
                     }
                 } else {
-                    weatherResult.value = ResponseCallback.Error("Something went wrong, please try again.")
+                    weatherResult.value =
+                        ResponseCallback.Error("Something went wrong, please try again.")
                 }
             } catch (e: Exception) {
                 weatherResult.value = ResponseCallback.Error(e.message.toString())
