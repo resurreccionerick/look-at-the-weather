@@ -1,21 +1,25 @@
 package com.example.look_at_the_weather
 
+import SplashScreen
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.Surface
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModelProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import com.example.look_at_the_weather.composables.WeatherPage
 import com.example.look_at_the_weather.ui.theme.LookattheweatherTheme
 import com.example.look_at_the_weather.viewmodel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import java.lang.reflect.Modifier
 
 /**
  * Once Hilt is set up in your Application class and an application-level component is available,
@@ -26,16 +30,28 @@ class MainActivity : ComponentActivity() {
     private val viewModel: WeatherViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             LookattheweatherTheme {
-                WeatherPage(viewModel) //pass the viewmodel
+                AppContent(viewModel)
             }
         }
     }
 }
 
+@Composable
+fun AppContent(viewModel: WeatherViewModel) {
+    var showSplash = remember { mutableStateOf(true) }
 
+    LaunchedEffect(Unit) {
+        delay(2000) // 3 seconds delay
+        showSplash.value = false
+    }
 
+    if (showSplash.value) {
+        SplashScreen()
+    } else {
+        WeatherPage(viewModel) // Pass the ViewModel
+    }
+}

@@ -1,4 +1,4 @@
-package com.example.look_at_the_weather
+package com.example.look_at_the_weather.composables
 
 
 import androidx.compose.foundation.layout.*
